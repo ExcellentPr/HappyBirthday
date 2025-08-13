@@ -26,10 +26,12 @@
       margin:0;
       font-family:"Poppins", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
       color:var(--ink);
-      background: radial-gradient(1200px 800px at 10% 10%, var(--bg1), transparent 60%),
+     /* background: radial-gradient(1200px 800px at 10% 10%, var(--bg1), transparent 60%),
                   radial-gradient(1000px 700px at 90% 20%, var(--bg2), transparent 60%),
                   radial-gradient(1000px 600px at 20% 90%, var(--bg3), transparent 60%),
-                  linear-gradient(120deg, #fff6fb 0%, #f7f9ff 100%);
+                  linear-gradient(120deg, #fff6fb 0%, #f7f9ff 100%);*/
+                    background: url('mj.jpeg') no-repeat center center fixed;
+
       overflow-x:hidden;
       --anim-speed: 22s;
       animation: hueFlow calc(var(--anim-speed) * 2) linear infinite;
@@ -58,7 +60,7 @@
       position:relative;
       width:min(1000px, 92vw);
       border-radius:28px;
-      background:rgba(255,255,255,.75);
+      background:rgba(255, 255, 255, 0.192);
       backdrop-filter: blur(8px) saturate(1.2);
       box-shadow: 0 20px 60px rgba(43,37,64,.18);
       padding: clamp(22px, 5vw, 40px);
@@ -182,6 +184,10 @@
   </style>
 </head>
 <body>
+<audio id="bgMusic" loop>
+  <source src="Ordinary.mp3" type="audio/mpeg">
+</audio>
+
   <div class="frame" aria-hidden="true"></div>
   <div class="wrap">
     <main class="card" role="main" aria-labelledby="h1">
@@ -263,89 +269,95 @@
   </div>
 
   <script>
-    // ===== Personalization via URL params =====
-    const params = new URLSearchParams(location.search);
-    const nameEl = document.getElementById('name');
-    const msgEl = document.getElementById('message');
-    if(params.get('name')) nameEl.textContent = decodeURIComponent(params.get('name'));
-    if(params.get('msg')) msgEl.textContent = decodeURIComponent(params.get('msg'));
+  // ===== Personalization via URL params =====
+  const params = new URLSearchParams(location.search);
+  const nameEl = document.getElementById('name');
+  const msgEl = document.getElementById('message');
+  if(params.get('name')) nameEl.textContent = decodeURIComponent(params.get('name'));
+  if(params.get('msg')) msgEl.textContent = decodeURIComponent(params.get('msg'));
 
-    // ===== Floating petals generator =====
-    const petalsWrap = document.querySelector('.petals');
-    const PETAL_COUNT = 40;
-    for(let i=0;i<PETAL_COUNT;i++){
-      const s = document.createElement('span');
-      s.style.left = Math.random()*100 + 'vw';
-      s.style.setProperty('--x', (Math.random()*60-30) + 'px');
-      s.style.setProperty('--fall', (10+Math.random()*10)+'s');
-      s.style.animationDelay = (Math.random()*-20)+'s';
-      s.style.transform = `translateY(${Math.random()*100}vh)`;
-      petalsWrap.appendChild(s);
-    }
+  // ===== Floating petals generator =====
+  const petalsWrap = document.querySelector('.petals');
+  const PETAL_COUNT = 40;
+  for(let i=0;i<PETAL_COUNT;i++){
+    const s = document.createElement('span');
+    s.style.left = Math.random()*100 + 'vw';
+    s.style.setProperty('--x', (Math.random()*60-30) + 'px');
+    s.style.setProperty('--fall', (10+Math.random()*10)+'s');
+    s.style.animationDelay = (Math.random()*-20)+'s';
+    s.style.transform = `translateY(${Math.random()*100}vh)`;
+    petalsWrap.appendChild(s);
+  }
 
-    // ===== Confetti (vanilla canvas) =====
-    const canvas = document.getElementById('confetti');
-    const ctx = canvas.getContext('2d');
-    const DPR = Math.max(1, window.devicePixelRatio || 1);
+  // ===== Confetti (vanilla canvas) =====
+  const canvas = document.getElementById('confetti');
+  const ctx = canvas.getContext('2d');
+  const DPR = Math.max(1, window.devicePixelRatio || 1);
 
-    function resizeCanvas(){
-      const rect = canvas.getBoundingClientRect();
-      canvas.width = rect.width * DPR;
-      canvas.height = rect.height * DPR;
-    }
-    resizeCanvas();
-    addEventListener('resize', resizeCanvas);
+  function resizeCanvas(){
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * DPR;
+    canvas.height = rect.height * DPR;
+  }
+  resizeCanvas();
+  addEventListener('resize', resizeCanvas);
 
-    function ConfettiPiece(){
-      this.x = Math.random() * canvas.width;
-      this.y = -20;
-      this.w = 6 + Math.random()*10;
-      this.h = 8 + Math.random()*14;
-      this.vx = -1 + Math.random()*2;
-      this.vy = 2 + Math.random()*3;
-      this.r = Math.random()*Math.PI;
-      this.vr = -0.1 + Math.random()*0.2;
-      const palette = [
-        '#ff5fa2','#915eff','#00dbde','#fc00ff','#ffd166','#06d6a0','#ef476f'
-      ];
-      this.color = palette[(Math.random()*palette.length)|0];
-    }
-    ConfettiPiece.prototype.update = function(){
-      this.x += this.vx; this.y += this.vy; this.r += this.vr;
-    }
-    ConfettiPiece.prototype.draw = function(){
-      ctx.save();
-      ctx.translate(this.x, this.y);
-      ctx.rotate(this.r);
-      ctx.fillStyle = this.color;
-      ctx.fillRect(-this.w/2, -this.h/2, this.w, this.h);
-      ctx.restore();
-    }
+  function ConfettiPiece(){
+    this.x = Math.random() * canvas.width;
+    this.y = -20;
+    this.w = 6 + Math.random()*10;
+    this.h = 8 + Math.random()*14;
+    this.vx = -1 + Math.random()*2;
+    this.vy = 2 + Math.random()*3;
+    this.r = Math.random()*Math.PI;
+    this.vr = -0.1 + Math.random()*0.2;
+    const palette = ['#ff5fa2','#915eff','#00dbde','#fc00ff','#ffd166','#06d6a0','#ef476f'];
+    this.color = palette[(Math.random()*palette.length)|0];
+  }
+  ConfettiPiece.prototype.update = function(){
+    this.x += this.vx; this.y += this.vy; this.r += this.vr;
+  }
+  ConfettiPiece.prototype.draw = function(){
+    ctx.save();
+    ctx.translate(this.x, this.y);
+    ctx.rotate(this.r);
+    ctx.fillStyle = this.color;
+    ctx.fillRect(-this.w/2, -this.h/2, this.w, this.h);
+    ctx.restore();
+  }
 
-    let confetti = [];
-    function burst(n=150){
-      for(let i=0;i<n;i++) confetti.push(new ConfettiPiece());
-    }
+  let confetti = [];
+  function burst(n=150){
+    for(let i=0;i<n;i++) confetti.push(new ConfettiPiece());
+  }
 
-    let raf;
-    function loop(){
-      ctx.clearRect(0,0,canvas.width, canvas.height);
-      confetti.forEach(c=>{ c.update(); c.draw(); });
-      confetti = confetti.filter(c => c.y < canvas.height+40);
-      raf = requestAnimationFrame(loop);
-    }
-    burst(200); // initial celebration 🎉
-    loop();
+  function loop(){
+    ctx.clearRect(0,0,canvas.width, canvas.height);
+    confetti.forEach(c=>{ c.update(); c.draw(); });
+    confetti = confetti.filter(c => c.y < canvas.height+40);
+    requestAnimationFrame(loop);
+  }
+  loop();
 
-    // Buttons
-    document.getElementById('burst').addEventListener('click', ()=> burst(180));
+  // ===== Background music =====
+  const music = document.getElementById('bgMusic');
 
-    // Theme switcher (soft shuffle of background and accent hues)
-    function randomPastel(){
-      const h = Math.floor(Math.random()*360);
-      return `hsl(${h} 100% 85%)`;
-    }
- 
-  </script>
+  // ===== Single button to play music and confetti =====
+  const startBtn = document.getElementById('burst'); // re-use your current button
+  startBtn.addEventListener('click', () => {
+    // Play music on first click
+    if(music.paused) music.play();
+    // Trigger confetti
+    burst(180);
+  });
+
+  // Theme switcher (soft shuffle of background and accent hues)
+  function randomPastel(){
+    const h = Math.floor(Math.random()*360);
+    return `hsl(${h} 100% 85%)`;
+  }
+</script>
+
+  
 </body>
 </html>
